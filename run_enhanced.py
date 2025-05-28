@@ -162,7 +162,8 @@ def run_enhanced_backend():
             sys.path.insert(0, backend_path)
         
         # Import and run the enhanced Flask app
-        from enhanced_app import app  # ← This should be enhanced_app, not run_enhanced
+        os.chdir('backend')
+        from enhanced_app import app # ← This should be enhanced_app, not run_enhanced
         
         print("✅ Enhanced backend modules loaded")
         print("🔥 Starting Flask server on http://localhost:5000")
