@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard - Smart Queue Management</title>
+    <link rel="stylesheet" href="css/manager-style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="manager-header">
+        <nav class="manager-nav">
+            <div class="manager-logo">
+                <i class="fas fa-chart-line"></i>
+                <span>Manager Dashboard</span>
+            </div>
+            <div class="nav-links">
+                <a href="#overview" class="nav-link active">Overview</a>
+                <a href="#bookings" class="nav-link">Bookings</a>
+                <a href="#routes" class="nav-link">Routes</a>
+                <a href="#analytics" class="nav-link">Analytics</a>
+                <a href="#alerts" class="nav-link">Alerts</a>
+                <a href="#reports" class="nav-link">Reports</a>
+            </div>
+            <div class="manager-profile">
+                <div class="profile-info">
+                    <span class="manager-name">Operations Manager</span>
+                    <span class="manager-role">Transport Division</span>
+                </div>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="manager-main">
+        <!-- Overview Section -->
+        <section id="overview" class="dashboard-section active">
+            <div class="section-header">
+                <h2><i class="fas fa-tachometer-alt"></i> System Overview</h2>
+                <div class="last-updated">
+                    Last updated: <span id="last-updated">Loading...</span>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card revenue">
+                    <div class="kpi-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="total-revenue">$0</div>
+                        <div class="kpi-label">Total Revenue</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12.5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-card bookings">
+                    <div class="kpi-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="total-bookings">0</div>
+                        <div class="kpi-label">Total Bookings</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+8.3%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-card occupancy">
+                    <div class="kpi-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="avg-occupancy">0%</div>
+                        <div class="kpi-label">Average Occupancy</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+5.2%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-card buses">
+                    <div class="kpi-icon">
+                        <i class="fas fa-bus"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="active-buses">0</div>
+                        <div class="kpi-label">Active Buses</div>
+                        <div class="kpi-change neutral">
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Daily Revenue Trend</h3>
+                        <div class="chart-controls">
+                            <select id="revenue-period">
+                                <option value="7">Last 7 days</option>
+                                <option value="30">Last 30 days</option>
+                                <option value="90">Last 3 months</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenue-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Route Performance</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn active" data-metric="bookings">Bookings</button>
+                            <button class="chart-btn" data-metric="revenue">Revenue</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="route-performance-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="system-health">
+                <h3><i class="fas fa-heartbeat"></i> System Health</h3>
+                <div class="health-grid">
+                    <div class="health-item">
+                        <div class="health-indicator operational"></div>
+                        <div class="health-content">
+                            <div class="health-title">Operational Buses</div>
+                            <div class="health-value" id="operational-buses">0</div>
+                        </div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-indicator warning"></div>
+                        <div class="health-content">
+                            <div class="health-title">Delayed Buses</div>
+                            <div class="health-value" id="delayed-buses">0</div>
+                        </div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-indicator maintenance"></div>
+                        <div class="health-content">
+                            <div class="health-title">Maintenance</div>
+                            <div class="health-value" id="maintenance-buses">0</div>
+                        </div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-indicator alert"></div>
+                        <div class="health-content">
+                            <div class="health-title">Active Alerts</div>
+                            <div class="health-value" id="system-alerts">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bookings Section -->
+        <section id="bookings" class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-ticket-alt"></i> Booking Management</h2>
+                <div class="booking-filters">
+                    <select id="booking-status-filter">
+                        <option value="all">All Status</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="boarded">Boarded</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <select id="booking-date-filter">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                    </select>
+                    <input type="text" id="booking-search" placeholder="Search by passenger name or booking ID...">
+                    <button class="btn-primary" onclick="managerApp.refreshBookings()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Booking Summary Cards -->
+            <div class="booking-summary-grid">
+                <div class="summary-card total">
+                    <div class="summary-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="summary-content">
+                        <div class="summary-value" id="total-bookings-count">0</div>
+                        <div class="summary-label">Total Bookings</div>
+                    </div>
+                </div>
+                <div class="summary-card confirmed">
+                    <div class="summary-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="summary-content">
+                        <div class="summary-value" id="confirmed-bookings-count">0</div>
+                        <div class="summary-label">Confirmed</div>
+                    </div>
+                </div>
+                <div class="summary-card boarded">
+                    <div class="summary-icon">
+                        <i class="fas fa-bus"></i>
+                    </div>
+                    <div class="summary-content">
+                        <div class="summary-value" id="boarded-bookings-count">0</div>
+                        <div class="summary-label">Boarded</div>
+                    </div>
+                </div>
+                <div class="summary-card today">
+                    <div class="summary-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="summary-content">
+                        <div class="summary-value" id="today-bookings-count">0</div>
+                        <div class="summary-label">Today's Bookings</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Table -->
+            <div class="bookings-table-container">
+                <div class="table-header">
+                    <h3>Recent Bookings</h3>
+                    <div class="table-pagination">
+                        <button id="prev-page" onclick="managerApp.previousPage()" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="page-info">Page 1 of 1</span>
+                        <button id="next-page" onclick="managerApp.nextPage()" disabled>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="bookings-table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Passenger</th>
+                                <th>Contact</th>
+                                <th>Route</th>
+                                <th>Bus</th>
+                                <th>Seat</th>
+                                <th>Travel Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookings-table-body">
+                            <!-- Bookings will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="bookings-loading" class="loading-state" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Loading bookings...</span>
+                </div>
+                <div id="no-bookings" class="empty-state" style="display: none;">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3>No Bookings Found</h3>
+                    <p>No bookings match your current filters.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Routes Section -->
+        <section id="routes" class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-route"></i> Route Management</h2>
+                <button class="btn-primary" id="add-route-btn">
+                    <i class="fas fa-plus"></i> Add Route
+                </button>
+            </div>
+
+            <div class="routes-grid" id="routes-grid">
+                <!-- Route cards will be populated here -->
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-analytics"></i> Advanced Analytics</h2>
+                <div class="analytics-filters">
+                    <select id="analytics-timeframe">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="quarter">This Quarter</option>
+                    </select>
+                    <select id="analytics-route">
+                        <option value="all">All Routes</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="analytics-header">
+                        <h3>Queue Analysis</h3>
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="analytics-content">
+                        <canvas id="queue-analytics-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="analytics-header">
+                        <h3>Peak Hours Analysis</h3>
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="analytics-content">
+                        <canvas id="peak-hours-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="analytics-header">
+                        <h3>Customer Satisfaction</h3>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="analytics-content">
+                        <div class="satisfaction-score">
+                            <div class="score-value">4.2</div>
+                            <div class="score-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div class="score-label">Average Rating</div>
+                        </div>
+                        <div class="satisfaction-breakdown">
+                            <div class="breakdown-item">
+                                <span>Punctuality</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                                <span>85%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Comfort</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                                <span>90%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Service</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 78%"></div>
+                                </div>
+                                <span>78%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="analytics-header">
+                        <h3>Route Efficiency</h3>
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="analytics-content">
+                        <div id="route-efficiency-list">
+                            <!-- Route efficiency data will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manager Alerts Section -->
+        <section id="alerts" class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Manager Alerts</h2>
+                <div class="alert-summary">
+                    <span class="alert-summary-item critical">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="critical-alerts">0</span> Critical
+                    </span>
+                    <span class="alert-summary-item high">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="high-alerts">0</span> High Priority
+                    </span>
+                    <span class="alert-summary-item medium">
+                        <i class="fas fa-exclamation"></i>
+                        <span id="medium-alerts">0</span> Medium
+                    </span>
+                </div>
+            </div>
+
+            <div class="manager-alerts-container" id="manager-alerts-container">
+                <!-- Manager alerts will be populated here -->
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-file-alt"></i> Reports & Insights</h2>
+                <button class="btn-primary" id="generate-report-btn">
+                    <i class="fas fa-download"></i> Generate Report
+                </button>
+            </div>
+
+            <div class="reports-grid">
+                <div class="report-card">
+                    <div class="report-header">
+                        <h3>Daily Operations Report</h3>
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="report-content">
+                        <div class="report-summary">
+                            <div class="summary-item">
+                                <span class="summary-label">Total Trips:</span>
+                                <span class="summary-value" id="daily-trips">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Passengers Served:</span>
+                                <span class="summary-value" id="daily-passengers">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Revenue Generated:</span>
+                                <span class="summary-value" id="daily-revenue">$0</span>
+                            </div>
+                        </div>
+                        <button class="btn-secondary">View Full Report</button>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-header">
+                        <h3>Performance Insights</h3>
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="report-content">
+                        <div class="insights-list">
+                            <div class="insight-item">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Route 1 shows 15% increase in bookings during morning rush</span>
+                            </div>
+                            <div class="insight-item">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Consider adding extra bus on Airport Shuttle during weekends</span>
+                            </div>
+                            <div class="insight-item">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Marina Bay stop experiencing consistent overcrowding</span>
+                            </div>
+                        </div>
+                        <button class="btn-secondary">View All Insights</button>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-header">
+                        <h3>Predictive Analytics</h3>
+                        <i class="fas fa-crystal-ball"></i>
+                    </div>
+                    <div class="report-content">
+                        <div class="prediction-item">
+                            <div class="prediction-label">Tomorrow's Expected Bookings:</div>
+                            <div class="prediction-value">245 (+12%)</div>
+                        </div>
+                        <div class="prediction-item">
+                            <div class="prediction-label">Peak Hour Prediction:</div>
+                            <div class="prediction-value">8:00 AM - 9:30 AM</div>
+                        </div>
+                        <div class="prediction-item">
+                            <div class="prediction-label">Capacity Utilization:</div>
+                            <div class="prediction-value">82% (Optimal)</div>
+                        </div>
+                        <button class="btn-secondary">View Predictions</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Route Detail Modal -->
+    <div id="route-detail-modal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-route"></i> Route Details</h2>
+                <span class="close" id="close-route-detail">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="route-detail-content">
+                    <!-- Route details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Action Modal -->
+    <div id="alert-action-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Alert Action</h2>
+                <span class="close" id="close-alert-action">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="alert-action-content">
+                    <!-- Alert action form will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Detail Modal -->
+    <div id="booking-detail-modal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-ticket-alt"></i> Booking Details</h2>
+                <span class="close" onclick="managerApp.closeBookingDetail()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="booking-detail-content">
+                    <!-- Booking details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/manager-app.js"></script>
+</body>
+</html>

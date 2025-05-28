@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Queue Management System - AI Powered Bus Booking</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-bus"></i>
+                SmartQueue
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#booking">Book Now</a></li>
+                <li><a href="#queue-status">Live Queue</a></li>
+                <li><a href="#dashboard" class="operator-link">Dashboard</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <button class="mobile-menu" id="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="hero">
+            <div class="container">
+                <h1>Smart Bus Queues with AI</h1>
+                <p>Revolutionary AI-powered queue management system for seamless bus travel experience</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number" id="total-bookings">0</span>
+                        <span class="stat-label">Active Bookings</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="buses-online">0</span>
+                        <span class="stat-label">Buses Online</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="avg-wait-time">0</span>
+                        <span class="stat-label">Avg Wait Time (min)</span>
+                    </div>
+                </div>
+                <div class="cta-buttons">
+                    <a href="#booking" class="cta-button primary">Book Your Seat</a>
+                    <a href="#queue-status" class="cta-button secondary">View Live Queues</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-time Booking Section -->
+        <section id="booking" class="section">
+            <div class="container">
+                <h2>Book Your Bus Seat</h2>
+                <div class="booking-container">
+                    <div class="booking-form-container">
+                        <form id="booking-form" class="booking-form">
+                            <div class="form-group">
+                                <label for="passenger-name">Full Name</label>
+                                <input type="text" id="passenger-name" name="passenger_name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="passenger-email">Email</label>
+                                <input type="email" id="passenger-email" name="passenger_email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="passenger-phone">Phone Number</label>
+                                <input type="tel" id="passenger-phone" name="passenger_phone" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="route-select">Select Route</label>
+                                    <select id="route-select" name="route_id" required>
+                                        <option value="">Choose a route...</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="travel-date">Travel Date</label>
+                                    <input type="datetime-local" id="travel-date" name="travel_date" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pickup-stop">Pickup Stop</label>
+                                    <select id="pickup-stop" name="pickup_stop_id" required>
+                                        <option value="">Select pickup stop...</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="dropoff-stop">Drop-off Stop</label>
+                                    <select id="dropoff-stop" name="dropoff_stop_id" required>
+                                        <option value="">Select drop-off stop...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bus-select">Select Bus</label>
+                                <select id="bus-select" name="bus_id" required>
+                                    <option value="">Choose a bus...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="ai-prediction" id="ai-prediction" style="display: none;">
+                                <div class="prediction-card">
+                                    <h4><i class="fas fa-brain"></i> AI Queue Prediction</h4>
+                                    <p id="prediction-text"></p>
+                                    <div class="prediction-stats">
+                                        <span class="prediction-stat">
+                                            <strong id="predicted-queue">0</strong> people in queue
+                                        </span>
+                                        <span class="prediction-stat">
+                                            <strong id="predicted-wait">0</strong> min wait time
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="cta-button primary" id="book-button">
+                                <i class="fas fa-ticket-alt"></i> Book Now
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="booking-info">
+                        <div class="info-card">
+                            <h3>Why Choose SmartQueue?</h3>
+                            <ul>
+                                <li><i class="fas fa-brain"></i> AI-powered queue predictions</li>
+                                <li><i class="fas fa-qrcode"></i> QR code boarding system</li>
+                                <li><i class="fas fa-bell"></i> Real-time notifications</li>
+                                <li><i class="fas fa-clock"></i> Guaranteed seat reservation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Queue Status -->
+        <section id="queue-status" class="section">
+            <div class="container">
+                <h2>Live Queue Status</h2>
+                <div class="queue-grid" id="queue-grid">
+                    <!-- Queue cards will be populated by JavaScript -->
+                </div>
+                <div class="queue-legend">
+                    <div class="legend-item">
+                        <span class="status-indicator low"></span>
+                        <span>Low Queue (0-5 people)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-indicator medium"></span>
+                        <span>Medium Queue (6-10 people)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="status-indicator high"></span>
+                        <span>High Queue (11+ people)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Operator Dashboard -->
+        <section id="dashboard" class="section dashboard-section">
+            <div class="container">
+                <h2>Operator Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>System Overview</h3>
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-content">
+                            <div class="metric">
+                                <span class="metric-value" id="dash-total-bookings">0</span>
+                                <span class="metric-label">Total Bookings</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value" id="dash-today-bookings">0</span>
+                                <span class="metric-label">Today's Bookings</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value" id="dash-active-buses">0</span>
+                                <span class="metric-label">Active Buses</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Active Alerts</h3>
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="card-content">
+                            <div id="alerts-container">
+                                <!-- Alerts will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card full-width">
+                        <div class="card-header">
+                            <h3>Real-time Queue Monitor</h3>
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-content">
+                            <div id="realtime-queues">
+                                <!-- Real-time queue data will be populated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="container">
+                <h2>About SmartQueue System</h2>
+                <div class="about-grid">
+                    <div class="about-content">
+                        <h3>Revolutionary Queue Management</h3>
+                        <p>Our AI-powered Smart Queue Management System transforms the way public transportation handles passenger flow. Using machine learning algorithms, we predict queue lengths, optimize bus schedules, and provide real-time updates to both passengers and operators.</p>
+                        
+                        <div class="features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-robot"></i>
+                                <div>
+                                    <h4>AI Queue Prediction</h4>
+                                    <p>Advanced algorithms predict queue lengths based on historical data, weather, and real-time factors.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <div>
+                                    <h4>Real-time Notifications</h4>
+                                    <p>Instant alerts about delays, queue changes, and boarding updates delivered to your device.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <i class="fas fa-qrcode"></i>
+                                <div>
+                                    <h4>QR Code Boarding</h4>
+                                    <p>Contactless boarding system with QR codes for quick and safe passenger verification.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <div>
+                                    <h4>Analytics Dashboard</h4>
+                                    <p>Comprehensive analytics for operators to optimize routes and improve service quality.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-diagram">
+                        <div class="system-flow">
+                            <div class="flow-step">
+                                <div class="step-icon">1</div>
+                                <h4>Passenger Books</h4>
+                                <p>Online seat reservation with instant confirmation</p>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <div class="step-icon">2</div>
+                                <h4>AI Predicts</h4>
+                                <p>System analyzes patterns and predicts queue length</p>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <div class="step-icon">3</div>
+                                <h4>Real-time Updates</h4>
+                                <p>Live notifications and queue status updates</p>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <div class="step-icon">4</div>
+                                <h4>QR Boarding</h4>
+                                <p>Quick scan and board with reserved seat</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Booking Confirmation Modal -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Booking Confirmed!</h2>
+                <span class="close" id="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="booking-success">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Your seat is reserved!</h3>
+                    <div class="booking-details" id="booking-details">
+                        <!-- Booking details will be populated -->
+                    </div>
+                    <div class="qr-code-section">
+                        <h4>Your QR Code</h4>
+                        <div class="qr-code" id="qr-code-display">
+                            <!-- QR code will be generated -->
+                        </div>
+                        <p>Show this QR code when boarding</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification System -->
+    <div id="notification-container" class="notification-container">
+        <!-- Notifications will be added here -->
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing your request...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>

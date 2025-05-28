@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Interface - Smart Queue Management</title>
+    <link rel="stylesheet" href="css/staff-style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="staff-header">
+        <nav class="staff-nav">
+            <div class="staff-logo">
+                <i class="fas fa-bus"></i>
+                <span>Staff Portal</span>
+            </div>
+            <div class="staff-info">
+                <div class="staff-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="staff-name">Bus Staff</span>
+                </div>
+                <div class="shift-status">
+                    <span class="status-indicator active"></span>
+                    <span>On Duty</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="staff-main">
+        <!-- Quick Actions Panel -->
+        <section class="quick-actions">
+            <h2><i class="fas fa-tachometer-alt"></i> Quick Actions</h2>
+            <div class="action-grid">
+                <button class="action-btn scan-qr" id="scan-qr-btn">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Scan QR Code</span>
+                    <div class="action-count" id="pending-scans">0</div>
+                </button>
+                
+                <button class="action-btn view-alerts" id="view-alerts-btn">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Active Alerts</span>
+                    <div class="action-count" id="alert-count">0</div>
+                </button>
+                
+                <button class="action-btn bus-status" id="bus-status-btn">
+                    <i class="fas fa-bus"></i>
+                    <span>My Bus Status</span>
+                </button>
+                
+                <button class="action-btn passenger-list" id="passenger-list-btn">
+                    <i class="fas fa-users"></i>
+                    <span>Today's Passengers</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Interactive Alerts Section -->
+        <section class="alerts-section">
+            <div class="section-header">
+                <h2><i class="fas fa-bell"></i> Interactive Alerts</h2>
+                <div class="alert-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="high">High Priority</button>
+                    <button class="filter-btn" data-filter="medium">Medium</button>
+                    <button class="filter-btn" data-filter="action">Action Required</button>
+                </div>
+            </div>
+            
+            <div class="alerts-container" id="alerts-container">
+                <!-- Alerts will be populated here -->
+            </div>
+        </section>
+
+        <!-- Bus Information Panel -->
+        <section class="bus-info-section">
+            <h2><i class="fas fa-info-circle"></i> My Bus Information</h2>
+            <div class="bus-info-grid">
+                <div class="info-card">
+                    <div class="card-header">
+                        <h3>Bus Details</h3>
+                        <i class="fas fa-bus"></i>
+                    </div>
+                    <div class="card-content" id="bus-details">
+                        <div class="info-item">
+                            <span class="label">Bus Number:</span>
+                            <span class="value" id="bus-number">Loading...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Route:</span>
+                            <span class="value" id="route-name">Loading...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Capacity:</span>
+                            <span class="value" id="bus-capacity">Loading...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Driver:</span>
+                            <span class="value" id="driver-name">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-header">
+                        <h3>Today's Status</h3>
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="card-content" id="today-stats">
+                        <div class="info-item">
+                            <span class="label">Total Bookings:</span>
+                            <span class="value" id="today-bookings">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Available Seats:</span>
+                            <span class="value" id="available-seats">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Passengers Boarded:</span>
+                            <span class="value" id="boarded-count">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Current Status:</span>
+                            <span class="value status-active" id="bus-status">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Boardings -->
+        <section class="recent-boardings">
+            <h2><i class="fas fa-history"></i> Recent Boardings</h2>
+            <div class="boardings-list" id="recent-boardings">
+                <!-- Recent boardings will be populated here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- QR Scanner Modal -->
+    <div id="qr-scanner-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-qrcode"></i> QR Code Scanner</h2>
+                <span class="close" id="close-scanner">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="scanner-section">
+                    <div class="scanner-input">
+                        <label for="qr-input">Scan or Enter QR Code:</label>
+                        <input type="text" id="qr-input" placeholder="Enter QR code or booking ID">
+                        <button id="verify-qr" class="btn-primary">
+                            <i class="fas fa-check"></i> Verify
+                        </button>
+                    </div>
+                    
+                    <div class="scan-result" id="scan-result" style="display: none;">
+                        <!-- Scan results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Detail Modal -->
+    <div id="alert-detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Alert Details</h2>
+                <span class="close" id="close-alert-detail">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="alert-detail-content">
+                    <!-- Alert details will be populated here -->
+                </div>
+                <div class="alert-actions">
+                    <button id="acknowledge-alert" class="btn-warning">
+                        <i class="fas fa-eye"></i> Acknowledge
+                    </button>
+                    <button id="resolve-alert" class="btn-success">
+                        <i class="fas fa-check-circle"></i> Resolve
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Passenger List Modal -->
+    <div id="passenger-list-modal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-users"></i> Today's Passengers</h2>
+                <span class="close" id="close-passenger-list">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="passenger-search">
+                    <input type="text" id="passenger-search" placeholder="Search passengers...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="passenger-table-container">
+                    <table class="passenger-table" id="passenger-table">
+                        <thead>
+                            <tr>
+                                <th>Seat</th>
+                                <th>Passenger</th>
+                                <th>Pickup Stop</th>
+                                <th>Status</th>
+                                <th>QR Code</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="passenger-table-body">
+                            <!-- Passenger data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification-toast" class="toast">
+        <div class="toast-content">
+            <i class="fas fa-info-circle"></i>
+            <span id="toast-message">Notification</span>
+        </div>
+        <button class="toast-close" onclick="hideToast()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/staff-app.js"></script>
+</body>
+</html>

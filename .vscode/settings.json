@@ -1,0 +1,12 @@
+{
+    "python.defaultInterpreterPath": "./venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "liveServer.settings.port": 8081,
+    "liveServer.settings.root": "/frontend",
+    "files.associations": {
+        "*.sql": "sql"
+    },
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+    }
+}
