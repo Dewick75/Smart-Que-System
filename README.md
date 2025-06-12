@@ -9,6 +9,11 @@ An AI-powered bus queue management system that provides:
 - **👥 Role-based Dashboards** for staff, managers, and passengers
 - **🚨 Interactive Alert System** for operational efficiency
 
+![image](https://github.com/user-attachments/assets/a953280d-71e8-4b92-b21b-be41590283ed)
+![image](https://github.com/user-attachments/assets/7cf4b336-b1f6-475c-9f82-4369ef137935)
+![image](https://github.com/user-attachments/assets/823986aa-8ed9-4904-8164-7121fbcfe0bf)
+
+
 ## 🏗️ **Project Structure**
 
 ```
@@ -74,6 +79,7 @@ python run_enhanced.py
 
 ### **How AI Works**
 The system uses **Scikit-learn LinearRegression** to predict queue lengths:
+![image](https://github.com/user-attachments/assets/7a7b571c-6f45-43ea-b284-a9780d24f3b0)
 
 #### **Input Features**
 - Historical queue patterns
@@ -262,6 +268,13 @@ python tests/demo_all_features.py
 - **Database**: SQLite with 6 core tables
 - **Tests**: Live system and feature demonstration tests
 
+![image](https://github.com/user-attachments/assets/72c3e949-6e60-4215-86f3-fbe9b4add424)
+![image](https://github.com/user-attachments/assets/9dc909c1-dca5-4d39-8d95-31d75835ce33)
+![image](https://github.com/user-attachments/assets/d7c20626-8a68-43b7-934a-95971ef266d7)
+![image](https://github.com/user-attachments/assets/4cd960f7-4eac-48b6-95ae-fc1c045c14ca)
+![image](https://github.com/user-attachments/assets/33d82fb8-6fa9-4e6c-ba57-8cad1e3b79da)
+![image](https://github.com/user-attachments/assets/ab7e0aa3-9125-4bbd-9c9c-3692c12932b7)
+![image](https://github.com/user-attachments/assets/7e8c863b-3751-4cd6-a7b6-644497e388d9)
 
 
 
